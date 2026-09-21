@@ -23,6 +23,9 @@ onMounted(async () => {
         console.log(response.data) // check if you can see it in the console
 
         categories.value = response.data
+
+        getItems() //initialisation
+
     } catch(e) {
         console.log(e.message)
     }
@@ -31,7 +34,27 @@ onMounted(async () => {
 // TODO: Fetch items for the currently selected category
 async function getItems() {
     // Add code
+    let url = "http://127.0.0.1:3000/items"
+
+    try {
+        let response = await axios.get(url,{
+            params: {
+                category : selected_category.value
+            }
+        })
+
+        items.value = response.data
+        console.log(items.value)
+
+        for(let item of items.value) {
+            item.quantity = 0;
+
+        }
+    } catch(e) {
+        console.log(e.message)
+    }
 }
+
 
 // Add selected items to cart
 function doAddToCart(itemsToAdd) {
@@ -47,6 +70,7 @@ function doAddToCart(itemsToAdd) {
         }
         if (!found) cartItems.value.push(item);
     }
+    console.log(cartItems.value)
 
     // TODO: store current cartitems into local storage
     // cartItems.value is a JS (complex) obj. We need to use JSON.stringify to convert the JS obj to JSON string
@@ -61,7 +85,7 @@ function doAddToCart(itemsToAdd) {
   
     <!-- TODO: Category selection dropdown -->
     <label for="categories">Categories</label>
-    <select class="form-control" id="categories" >
+    <select class="form-control" id="categories" v-model="selected_category" v-on:change="getItems">
         <option v-for="category in categories"> {{ category }} </option>
         
     </select>
@@ -71,10 +95,10 @@ function doAddToCart(itemsToAdd) {
     <div class="container-fluid">
         <div class="row p-3">
             <div class='col-md-6 text-center'>
-                <!-- TODO: Show Items using ItemsBrowser-->
-                <button>
+                <!-- TODO: Show Items using ItemsBrowser aka custom element-->
+                <ItemsBrowser v-bind:items="items" v-on:addcart="doAddToCart">
                     Add to Cart
-                </button>
+                </ItemsBrowser>
             </div>
         </div>
 
@@ -88,7 +112,7 @@ function doAddToCart(itemsToAdd) {
             </RouterLink>
         </div>
     </div>
-
+    
 </template>
 
 <style scoped></style>

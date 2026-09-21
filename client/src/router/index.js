@@ -3,7 +3,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import AboutView from "../views/AboutView.vue";
 import MenuView from "../views/MenuView.vue";
 import CartView from "../views/CartView.vue";
-
+// importing from views instead of components 
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
